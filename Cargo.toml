@@ -1,0 +1,15 @@
+[package]
+name = "cranelift_bfc"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+cranelift-codegen = "0.101.4"
+cranelift-frontend = "0.101.4"
+cranelift-module = "0.101.4"
+cranelift-object = "0.101.4"
+num_cpus = "1.16.0"
+target-lexicon = "0.12.12"
+threadpool = "1.8.1"

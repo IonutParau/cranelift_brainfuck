@@ -5,6 +5,7 @@ use threadpool::ThreadPool;
 
 mod backend;
 mod parser;
+mod optimizer;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -55,8 +56,9 @@ fn main() {
 
             let tokens = parser::tokens(&code);
             let parsed = parser::parse(&tokens);
+            let optimized = optimizer::optimize(&parsed);
 
-            let binary = backend::compile(&parsed);
+            let binary = backend::compile(&optimized);
 
             let mut out = OpenOptions::new()
                 .write(true)

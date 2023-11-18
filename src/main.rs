@@ -4,8 +4,8 @@ use std::io::{Read, Write};
 use threadpool::ThreadPool;
 
 mod backend;
-mod parser;
 mod optimizer;
+mod parser;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -35,16 +35,16 @@ fn main() {
     let cpus = num_cpus::get();
     let pool = ThreadPool::new(cpus);
 
-    use std::sync::{Arc, Barrier};
+    use std::sync::mpsc::channel;
 
-    let barrier = Arc::new(Barrier::new(pairs.len() + 1));
+    let (sender, receiver) = channel();
 
     for (input, output) in pairs.iter() {
         println!("{} -> {}", input, output);
         let input = input.clone();
         let output = output.clone();
-        let barrier = barrier.clone();
 
+        let sender = sender.clone();
         pool.execute(move || {
             let mut f = OpenOptions::new()
                 .read(true)
@@ -71,9 +71,9 @@ fn main() {
                 output
             ));
 
-            barrier.wait();
+            sender.send(1).expect("channel to wait for the pool");
         });
     }
 
-    barrier.wait();
+    println!("Compiled {} file(s)", receiver.iter().take(pairs.len()).sum::<i32>());
 }

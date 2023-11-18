@@ -199,10 +199,9 @@ pub fn compile_nodes(
             }
             Node::BeginLoop(n) => {
                 let id = *n as usize;
-                let (begin, body, end, after) = loop_blocks[id];
+                let (begin, body, _, after) = loop_blocks[id];
                 builder.ins().jump(begin, &[]);
                 builder.switch_to_block(begin);
-                // Check if 0, and go to end if so
                 let p = builder.use_var(ptr);
                 let x = builder.ins().load(I8, flags, p, 0);
                 let zero = builder.ins().iconst(I8, 0);
@@ -213,10 +212,9 @@ pub fn compile_nodes(
             }
             Node::EndLoop(n) => {
                 let id = *n as usize;
-                let (begin, body, end, after) = loop_blocks[id];
+                let (_, body, end, after) = loop_blocks[id];
                 builder.ins().jump(end, &[]);
                 builder.switch_to_block(end);
-                // Check if not 0, and go to begin if so
                 let p = builder.use_var(ptr);
                 let x = builder.ins().load(I8, flags, p, 0);
                 let zero = builder.ins().iconst(I8, 0);
